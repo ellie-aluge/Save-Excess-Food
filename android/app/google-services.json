@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "365513269744",
+    "project_id": "save-excess-food",
+    "storage_bucket": "save-excess-food.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:365513269744:android:06c5ef7f9a3b094b11bd35",
+        "android_client_info": {
+          "package_name": "com.example.fyp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "365513269744-71c5cfk2huvmjkdeuod3knl53dtrg6k1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAE9P85Od4r26T1wfZ6ZhGU-r8efV56J3E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "365513269744-71c5cfk2huvmjkdeuod3knl53dtrg6k1.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "365513269744-7fc3m78tgv9ntc7bbl1glpn6ns0q1tau.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.fyp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
