@@ -11,7 +11,8 @@ import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:fyp/Views/AdministrationView/SuccessfulFormView.dart';
 
 class SignUpView extends StatefulWidget {
-  const SignUpView({Key? key}) : super(key: key);
+  final String? role;
+  const SignUpView({Key? key, required this.role}) : super(key: key);
 
   @override
   State<SignUpView> createState() => _SignUpViewState();
@@ -19,6 +20,8 @@ class SignUpView extends StatefulWidget {
 
 
 class _SignUpViewState extends State<SignUpView> {
+
+  String? roles;
   String? countryValue = "Malaysia";
   String? stateValue = "";
   String? cityValue = "";
@@ -31,9 +34,10 @@ class _SignUpViewState extends State<SignUpView> {
   String? telephone;
   String? website;
   String? _phoneNumber;
+  String? uid;
 
 
-   final _formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
   // final auth = FirebaseAuth.instance;
   final companyNameControl = TextEditingController();
   final telephoneControl = TextEditingController();
@@ -42,15 +46,18 @@ class _SignUpViewState extends State<SignUpView> {
 
 
   void _submitForm() async {
-      Stakeholder stakeholder = Stakeholder(email: _email, companyName: companyNameControl.text, isVerified: isVerified, website: website, city: cityValue, state: stateValue, country: countryValue, address: address,  password: _password, telephone: telephone);
-      String errorMessage = await SignUpController.addStakeholder(stakeholder);
-      if (errorMessage == null) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => SuccessfulFormView()),);
-      } else {
-        print (errorMessage);
-        // Display error message to user
+
+    Stakeholder stakeholder = Stakeholder(uid:uid, email: _email, companyName: companyNameControl.text, isVerified: isVerified, website: website, city: cityValue, state: stateValue, country: countryValue, address: address,  password: _password, telephone: telephone, role:widget.role);
+
+    String errorMessage = await SignUpController.addStakeholder(stakeholder);
+    if (errorMessage == "success") {
+      print("hello");
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => SuccessfulFormView()),);
+    } else {
+      print (errorMessage);
+      // Display error message to user
 
     }
   }
@@ -58,6 +65,7 @@ class _SignUpViewState extends State<SignUpView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: GlobalColors.mainColor,
         body: ListView(
             children: [
               Column(
@@ -107,306 +115,306 @@ class _SignUpViewState extends State<SignUpView> {
 
                             child:SingleChildScrollView(
 
-                              child: Column(
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.only(top:35, left:20),
-                                    margin: const EdgeInsets.symmetric(horizontal:12),
-                                    alignment: Alignment.center,
-                                    child: Align(
-                                      alignment: Alignment.bottomLeft,
-                                      child: Text(
-                                        'SIGNUP',
-                                        maxLines: 3,
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          fontSize: 23,
-                                          fontWeight:FontWeight.bold,
-                                          color: GlobalColors.titleHeading,
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.only(top:35, left:20),
+                                      margin: const EdgeInsets.symmetric(horizontal:12),
+                                      alignment: Alignment.center,
+                                      child: Align(
+                                        alignment: Alignment.bottomLeft,
+                                        child: Text(
+                                          'SIGNUP',
+                                          maxLines: 3,
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            fontSize: 23,
+                                            fontWeight:FontWeight.bold,
+                                            color: GlobalColors.titleHeading,
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                  Container(
-                                      padding: const EdgeInsets.all(18),
-                                      margin: const EdgeInsets.symmetric(horizontal:12),
-                                      alignment: Alignment.center,
-                                      child: Form(
-                                          key: _formKey,
+                                    Container(
+                                        padding: const EdgeInsets.all(18),
+                                        margin: const EdgeInsets.symmetric(horizontal:12),
+                                        alignment: Alignment.center,
+                                        child: Form(
+                                            key: _formKey,
 
-                                         child: Column(
-                                            children: [
-                                                 TextFormField(
-                                                     controller: companyNameControl,
-                                                  maxLength:25,
-                                                     validator: (value) {
-                                                       if (value == null || value.isEmpty) {
-                                                         return 'Please enter the company name';
-                                                       }
-                                                     },
-                                                  decoration:  InputDecoration(
-                                                    contentPadding: EdgeInsets.symmetric(vertical: 1),
-
-                                                    prefixIcon: Icon(Icons.person,
-                                                        size:18),
-                                                    counterText: "",
-                                                    hintText: 'Company Name',
-                                                    hintStyle: TextStyle(
-                                                        color:GlobalColors.formLabel,
-                                                        fontWeight: FontWeight.w500,
-                                                        fontSize: 13
-                                                    ),
-
-                                                  )
-                                              ),
-                                              SizedBox(height: 11), // adjust the height as needed
-                                              TextFormField(
-                                                  maxLength:25,
-                                                  validator: (value) => EmailValidator.validate(value!)
-                                                      ? null
-                                                      : "Please enter a valid email",
-                                                  keyboardType: TextInputType.emailAddress,
-                                                  onChanged: (value) {
-                                                    _email = value.toString().trim();
-                                                  },
-
-
-                                                  decoration:  InputDecoration(
-                                                      contentPadding: EdgeInsets.symmetric(vertical: 1),
-                                                      prefixIcon: Icon(
-                                                          Icons.email_outlined,
-                                                          size:17),
-                                                      counterText: "",
-                                                      enabledBorder: OutlineInputBorder(
-                                                        borderSide: BorderSide(
-                                                            width: 1.5, color: GlobalColors.inputBorder), //<-- SEE HERE
-                                                      ),
-                                                      hintText: 'Email',
-                                                      hintStyle: TextStyle(
-                                                          color:GlobalColors.formLabel,
-                                                          fontWeight: FontWeight.w500,
-                                                          fontSize: 13
-                                                      )
-                                                  )
-                                              ),
-                                              SizedBox(height:11),
-                                              TextFormField(
-                                                  maxLength:25,
-                                                  validator: (value) {
-                                                    if (value == null || value.isEmpty) {
-                                                      return 'Please enter the company Address';
-                                                    }
-                                                  },
-                                                  decoration:  InputDecoration(
-                                                      contentPadding: EdgeInsets.symmetric(vertical: 1),
-                                                      prefixIcon: Icon(
-                                                          Icons.email_outlined,
-                                                          size:17),
-                                                      counterText: "",
-                                                      enabledBorder: OutlineInputBorder(
-                                                        borderSide: BorderSide(
-                                                            width: 1.5, color: GlobalColors.inputBorder), //<-- SEE HERE
-                                                      ),
-                                                      hintText: 'Address',
-                                                      hintStyle: TextStyle(
-                                                          color:GlobalColors.formLabel,
-                                                          fontWeight: FontWeight.w500,
-                                                          fontSize: 13
-                                                      )
-                                                  )
-                                              ),
-
-                                              SizedBox(height: 11),
-
-                                              CSCPicker(
-                                                defaultCountry: CscCountry.Malaysia,
-                                                disableCountry: true,
-                                               onCityChanged: (city){cityValue=city;},
-                                                onStateChanged: (state){stateValue=state;},
-                                                onCountryChanged: (country){},
-                                              ),
-
-                                              SizedBox(height:11),
-
-                                              InternationalPhoneNumberInput(
-                                                onInputChanged: (PhoneNumber number) {
-                                                  telephone=number.phoneNumber;
-                                                },
-                                                inputDecoration: InputDecoration(
-                                                  hintText: 'Phone Number',
-                                                  border: OutlineInputBorder(
-                                                    borderSide: BorderSide(),
-                                                  ),
-                                                ),
-                                                // selectorConfig: SelectorConfig(
-                                                //   selectorType: PhoneInputSelectorType.BOTTOM_SHEET,
-                                                // ),
-                                                initialValue: PhoneNumber(isoCode: 'MY'),
-                                              ),
-
-                                              // TextFormField(
-                                              //     maxLength:25,
-                                              //     validator: (value) {
-                                              //       if (value == null || value.isEmpty) {
-                                              //         return 'Please enter the company telephone';
-                                              //       }
-                                              //     },
-                                              //     decoration:  InputDecoration(
-                                              //         contentPadding: EdgeInsets.symmetric(vertical: 3),
-                                              //         prefixIcon: Icon(
-                                              //             Icons.phone_android_outlined,
-                                              //             size:13),
-                                              //         counterText: "",
-                                              //         enabledBorder: OutlineInputBorder(
-                                              //           borderSide: BorderSide(
-                                              //               width: 1.5, color: GlobalColors.inputBorder), //<-- SEE HERE
-                                              //         ),
-                                              //         hintText: 'Telephone',
-                                              //         hintStyle: TextStyle(
-                                              //             color:GlobalColors.formLabel,
-                                              //             fontWeight: FontWeight.w500,
-                                              //             fontSize: 13
-                                              //         )
-                                              //     )
-                                              // ),
-                                              SizedBox(height:11),
-                                              TextFormField(
-                                                  maxLength:25,
-                                                  validator: (value) {
-                                                    if (value == null || value.isEmpty) {
-                                                      return 'Please enter the company password';
-                                                    }
-                                                  },
-                                                  onChanged: (value) {
-                                                    _password = value.toString();
-                                                  },
-                                                  decoration:  InputDecoration(
-                                                      contentPadding: EdgeInsets.symmetric(vertical: 3),
-                                                      prefixIcon: Icon(
-                                                          Icons.lock_open_outlined,
-                                                          size:17),
-                                                      counterText: "",
-                                                      hintText: 'Website',
-                                                      hintStyle: TextStyle(
-                                                          color:GlobalColors.formLabel,
-                                                          fontWeight: FontWeight.w500,
-                                                          fontSize: 13
-                                                      )
-                                                  )
-                                              ),
-
-                                              SizedBox(height:11),
-                                              TextFormField(
-                                                  maxLength:25,
-                                                  validator: (value) {
-                                                    if (value == null ||
-                                                        value.isEmpty ||
-                                                        value.length < 8) {
-                                                      return 'Please enter a strong password with minimum 8 characters';
-                                                    } else
-                                                      return null;
-                                                  },
-                                                  maxLines: 1,
-                                                  obscureText: true,
-                                                  onChanged: (value) {
-                                                    _password = value;
-                                                  },
-                                                  decoration:  InputDecoration(
-                                                      contentPadding: EdgeInsets.symmetric(vertical: 3),
-                                                      prefixIcon: Icon(
-                                                          Icons.lock_open_outlined,
-                                                          size:17),
-                                                      counterText: "",
-                                                      hintText: 'Password',
-                                                      hintStyle: TextStyle(
-                                                          color:GlobalColors.formLabel,
-                                                          fontWeight: FontWeight.w500,
-                                                          fontSize: 13
-                                                      )
-                                                  )
-                                              ),
-                                              SizedBox(height:11),
-                                              TextFormField(
-                                                  maxLength:25,
-                                                  validator: (value) {
-                                                    if (value == null ||
-                                                        value.isEmpty ||
-                                                        value!=_password) {
-                                                      return 'Please ensure the password is the same';
-                                                    } else
-                                                      return null;
-                                                  },
-                                                  obscureText: true,
-                                                  decoration:  InputDecoration(
-                                                      contentPadding: EdgeInsets.symmetric(vertical: 3),
-                                                      prefixIcon: Icon(
-                                                          Icons.lock_open_outlined,
-                                                          size:17),
-                                                      counterText: "",
-                                                      hintText: 'Confirm Password',
-                                                      hintStyle: TextStyle(
-                                                          color:GlobalColors.formLabel,
-                                                          fontWeight: FontWeight.w500,
-                                                          fontSize: 13
-                                                      )
-                                                  )
-                                              ),
-
-                                              SizedBox(height:10),
-                                              Container(
-                                                  margin: const EdgeInsets.all(38),
-                                                  width:300,
-                                                  height:40,
-                                                  child: ElevatedButton(
-                                                    style:ElevatedButton.styleFrom(
-                                                      primary: GlobalColors.titleHeading,
-
-                                                    ),
-                                                    onPressed: ()
-                                                      {
-                                                      // Validate returns true if the form is valid, or false otherwise.
-                                                      if (_formKey.currentState!.validate()) {
-
-                                                        _submitForm();
-                                                      // ScaffoldMessenger.of(context).showSnackBar(
-                                                      // const SnackBar(content: Text('Processing Data')),
-                                                      // );
-
-                                                        // dynamic result = await _auth.RegisterWithEmail(email,
-                                                        //     password, firstNameControl, secondNameControl, role);
+                                            child: Column(
+                                              children: [
+                                                TextFormField(
+                                                    controller: companyNameControl,
+                                                    maxLength:25,
+                                                    validator: (value) {
+                                                      if (value == null || value.isEmpty) {
+                                                        return 'Please enter the company name';
                                                       }
-
                                                     },
-                                                    child: const Text('SIGNUP',
-                                                        style:TextStyle(
-                                                          fontWeight: FontWeight.bold,
-                                                        )),
-                                                  )
-                                              ),
-                                            ],
-                                          )
-                                      )
+                                                    decoration:  InputDecoration(
+                                                      contentPadding: EdgeInsets.symmetric(vertical: 1),
 
-                                  ),
+                                                      prefixIcon: Icon(Icons.person,
+                                                          size:18),
+                                                      counterText: "",
+                                                      hintText: 'Company Name',
+                                                      hintStyle: TextStyle(
+                                                          color:GlobalColors.formLabel,
+                                                          fontWeight: FontWeight.w500,
+                                                          fontSize: 13
+                                                      ),
+
+                                                    )
+                                                ),
+                                                SizedBox(height: 11), // adjust the height as needed
+                                                TextFormField(
+                                                    maxLength:25,
+                                                    validator: (value) => EmailValidator.validate(value!)
+                                                        ? null
+                                                        : "Please enter a valid email",
+                                                    keyboardType: TextInputType.emailAddress,
+                                                    onChanged: (value) {
+                                                      _email = value.toString().trim();
+                                                    },
+
+
+                                                    decoration:  InputDecoration(
+                                                        contentPadding: EdgeInsets.symmetric(vertical: 1),
+                                                        prefixIcon: Icon(
+                                                            Icons.email_outlined,
+                                                            size:17),
+                                                        counterText: "",
+                                                        enabledBorder: OutlineInputBorder(
+                                                          borderSide: BorderSide(
+                                                              width: 1.5, color: GlobalColors.inputBorder), //<-- SEE HERE
+                                                        ),
+                                                        hintText: 'Email',
+                                                        hintStyle: TextStyle(
+                                                            color:GlobalColors.formLabel,
+                                                            fontWeight: FontWeight.w500,
+                                                            fontSize: 13
+                                                        )
+                                                    )
+                                                ),
+                                                SizedBox(height:11),
+                                                TextFormField(
+                                                    maxLength:25,
+                                                    validator: (value) {
+                                                      if (value == null || value.isEmpty) {
+                                                        return 'Please enter the company Address';
+                                                      }
+                                                    },
+                                                    decoration:  InputDecoration(
+                                                        contentPadding: EdgeInsets.symmetric(vertical: 1),
+                                                        prefixIcon: Icon(
+                                                            Icons.email_outlined,
+                                                            size:17),
+                                                        counterText: "",
+                                                        enabledBorder: OutlineInputBorder(
+                                                          borderSide: BorderSide(
+                                                              width: 1.5, color: GlobalColors.inputBorder), //<-- SEE HERE
+                                                        ),
+                                                        hintText: 'Address',
+                                                        hintStyle: TextStyle(
+                                                            color:GlobalColors.formLabel,
+                                                            fontWeight: FontWeight.w500,
+                                                            fontSize: 13
+                                                        )
+                                                    )
+                                                ),
+
+                                                SizedBox(height: 11),
+
+                                                CSCPicker(
+                                                  defaultCountry: CscCountry.Malaysia,
+                                                  disableCountry: true,
+                                                  onCityChanged: (city){cityValue=city;},
+                                                  onStateChanged: (state){stateValue=state;},
+                                                  onCountryChanged: (country){},
+                                                ),
+
+                                                SizedBox(height:11),
+
+                                                InternationalPhoneNumberInput(
+                                                  onInputChanged: (PhoneNumber number) {
+                                                    telephone=number.phoneNumber;
+                                                  },
+                                                  inputDecoration: InputDecoration(
+                                                    hintText: 'Phone Number',
+                                                    border: OutlineInputBorder(
+                                                      borderSide: BorderSide(),
+                                                    ),
+                                                  ),
+                                                  // selectorConfig: SelectorConfig(
+                                                  //   selectorType: PhoneInputSelectorType.BOTTOM_SHEET,
+                                                  // ),
+                                                  initialValue: PhoneNumber(isoCode: 'MY'),
+                                                ),
+
+                                                // TextFormField(
+                                                //     maxLength:25,
+                                                //     validator: (value) {
+                                                //       if (value == null || value.isEmpty) {
+                                                //         return 'Please enter the company telephone';
+                                                //       }
+                                                //     },
+                                                //     decoration:  InputDecoration(
+                                                //         contentPadding: EdgeInsets.symmetric(vertical: 3),
+                                                //         prefixIcon: Icon(
+                                                //             Icons.phone_android_outlined,
+                                                //             size:13),
+                                                //         counterText: "",
+                                                //         enabledBorder: OutlineInputBorder(
+                                                //           borderSide: BorderSide(
+                                                //               width: 1.5, color: GlobalColors.inputBorder), //<-- SEE HERE
+                                                //         ),
+                                                //         hintText: 'Telephone',
+                                                //         hintStyle: TextStyle(
+                                                //             color:GlobalColors.formLabel,
+                                                //             fontWeight: FontWeight.w500,
+                                                //             fontSize: 13
+                                                //         )
+                                                //     )
+                                                // ),
+                                                SizedBox(height:11),
+                                                TextFormField(
+                                                    maxLength:25,
+                                                    validator: (value) {
+                                                      if (value == null || value.isEmpty) {
+                                                        return 'Please enter the company password';
+                                                      }
+                                                    },
+                                                    onChanged: (value) {
+                                                      _password = value.toString();
+                                                    },
+                                                    decoration:  InputDecoration(
+                                                        contentPadding: EdgeInsets.symmetric(vertical: 3),
+                                                        prefixIcon: Icon(
+                                                            Icons.lock_open_outlined,
+                                                            size:17),
+                                                        counterText: "",
+                                                        hintText: 'Website',
+                                                        hintStyle: TextStyle(
+                                                            color:GlobalColors.formLabel,
+                                                            fontWeight: FontWeight.w500,
+                                                            fontSize: 13
+                                                        )
+                                                    )
+                                                ),
+
+                                                SizedBox(height:11),
+                                                TextFormField(
+                                                    maxLength:25,
+                                                    validator: (value) {
+                                                      if (value == null ||
+                                                          value.isEmpty ||
+                                                          value.length < 8) {
+                                                        return 'Please enter a strong password with minimum 8 characters';
+                                                      } else
+                                                        return null;
+                                                    },
+                                                    maxLines: 1,
+                                                    obscureText: true,
+                                                    onChanged: (value) {
+                                                      _password = value;
+                                                    },
+                                                    decoration:  InputDecoration(
+                                                        contentPadding: EdgeInsets.symmetric(vertical: 3),
+                                                        prefixIcon: Icon(
+                                                            Icons.lock_open_outlined,
+                                                            size:17),
+                                                        counterText: "",
+                                                        hintText: 'Password',
+                                                        hintStyle: TextStyle(
+                                                            color:GlobalColors.formLabel,
+                                                            fontWeight: FontWeight.w500,
+                                                            fontSize: 13
+                                                        )
+                                                    )
+                                                ),
+                                                SizedBox(height:11),
+                                                TextFormField(
+                                                    maxLength:25,
+                                                    validator: (value) {
+                                                      if (value == null ||
+                                                          value.isEmpty ||
+                                                          value!=_password) {
+                                                        return 'Please ensure the password is the same';
+                                                      } else
+                                                        return null;
+                                                    },
+                                                    obscureText: true,
+                                                    decoration:  InputDecoration(
+                                                        contentPadding: EdgeInsets.symmetric(vertical: 3),
+                                                        prefixIcon: Icon(
+                                                            Icons.lock_open_outlined,
+                                                            size:17),
+                                                        counterText: "",
+                                                        hintText: 'Confirm Password',
+                                                        hintStyle: TextStyle(
+                                                            color:GlobalColors.formLabel,
+                                                            fontWeight: FontWeight.w500,
+                                                            fontSize: 13
+                                                        )
+                                                    )
+                                                ),
+
+                                                SizedBox(height:10),
+                                                Container(
+                                                    margin: const EdgeInsets.all(38),
+                                                    width:300,
+                                                    height:40,
+                                                    child: ElevatedButton(
+                                                      style:ElevatedButton.styleFrom(
+                                                        primary: GlobalColors.titleHeading,
+
+                                                      ),
+                                                      onPressed: ()
+                                                      {
+                                                        // Validate returns true if the form is valid, or false otherwise.
+                                                        if (_formKey.currentState!.validate()) {
+
+                                                          _submitForm();
+                                                          // ScaffoldMessenger.of(context).showSnackBar(
+                                                          // const SnackBar(content: Text('Processing Data')),
+                                                          // );
+
+                                                          // dynamic result = await _auth.RegisterWithEmail(email,
+                                                          //     password, firstNameControl, secondNameControl, role);
+                                                        }
+
+                                                      },
+                                                      child: const Text('SIGNUP',
+                                                          style:TextStyle(
+                                                            fontWeight: FontWeight.bold,
+                                                          )),
+                                                    )
+                                                ),
+                                              ],
+                                            )
+                                        )
+
+                                    ),
 
 
 
 
 
-                                  Container(
-                                    margin: const EdgeInsets.all(0),
-                                    width:300,
-                                    height:40,
-                                    alignment: Alignment.center,
-                                    child:  Text('Login',
-                                        style:TextStyle(
-                                          color: GlobalColors.titleHeading,
-                                          fontWeight: FontWeight.bold,
-                                        )),
+                                    Container(
+                                      margin: const EdgeInsets.all(0),
+                                      width:300,
+                                      height:40,
+                                      alignment: Alignment.center,
+                                      child:  Text('Login',
+                                          style:TextStyle(
+                                            color: GlobalColors.titleHeading,
+                                            fontWeight: FontWeight.bold,
+                                          )),
 
-                                  )
-                                ],
-                              )
+                                    )
+                                  ],
+                                )
                             ),
                           ),
                         ),

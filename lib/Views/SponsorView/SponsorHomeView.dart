@@ -6,6 +6,7 @@ import 'package:fyp/Views/AdministrationView/TradeMark.dart';
 import 'package:fyp/Views/AdministrationView/NotificationAlert.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:fyp/Views/AdministrationView/HomeView.dart';
+import 'package:fyp/Views/SponsorView/SurplusFoodView.dart';
 
 class SponsorHomeView extends StatefulWidget {
   const SponsorHomeView({Key? key}) : super(key: key);
@@ -189,13 +190,8 @@ class _SponsorHomeViewState extends State<SponsorHomeView> {
       ),
 
               // Widget for the Surplus Food.
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('This is the third tab.'),
-                  Icon(Icons.directions_bike),
-                ],
-              ),
+
+             SurplusFoodView(),
 
 
               // Widget for the  Donations(money).

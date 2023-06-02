@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
-// import 'package:flutter/cupertino.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
 
 class Stakeholder {
   CollectionReference stakeholder = FirebaseFirestore.instance.collection('stakeholder');
@@ -16,10 +15,10 @@ class Stakeholder {
   String? address;
   String? telephone;
   String? password;
-
+  String? role;
 
   Stakeholder({
-   this.uid,
+    this.uid,
     this.email,
     this.address,
     this.city,
@@ -30,11 +29,11 @@ class Stakeholder {
     this.telephone,
     this.website,
     this.password,
-
+    this.role,
   });
 
-  // receiving data from server
-  factory Stakeholder.fromMap(map) {
+  // Receiving data from the server
+  factory Stakeholder.fromMap(Map<String, dynamic> map) {
     return Stakeholder(
       uid: map['uid'],
       email: map['email'],
@@ -47,13 +46,18 @@ class Stakeholder {
       telephone: map['telephone'],
       website: map['website'],
       password: map['password'],
+      role: map['role'],
     );
   }
 
-  // sending data to our server
-  Map<String, dynamic> toMap() {
+  Future<void> createStakeholder(String? stakeholderID) async {
+    await FirebaseFirestore.instance.collection('stakeholder').doc(stakeholderID).set(toMap(stakeholderID));
+  }
+
+  // Sending data to the server
+  Map<String, dynamic> toMap(String? stakeholderID) {
     return {
-      'uid': uid,
+      'uid': stakeholderID,
       'email': email,
       'address': address,
       'city': city,
@@ -64,9 +68,20 @@ class Stakeholder {
       'telephone': telephone,
       'website': website,
       'password': password,
+      'role': role,
     };
   }
 
+  String getCurrentUserID() {
+    User? user = FirebaseAuth.instance.currentUser;
 
-
+    if (user != null) {
+      String userID = user.uid;
+      print('Current user ID: $userID');
+      return userID;
+    } else {
+      print('No user is currently signed in.');
+      return '';
+    }
+  }
 }

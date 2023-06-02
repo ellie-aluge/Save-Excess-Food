@@ -4,13 +4,14 @@ import 'package:fyp/utils/global.colors.dart';
 import 'package:get/get.dart';
 import 'dart:async';
 import 'package:fyp/Views/AdministrationView/SignUpView.dart';
-import 'package:fyp/Views/AdministrationView/SuccessfulFormView.dart';
+import 'package:fyp/Views/DonationView/DonateFoodView.dart';
+import 'package:fyp/Views/AdministrationView/RoleView.dart';
 class LandingPage extends StatelessWidget {
   const LandingPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    Timer(Duration(seconds: 2),() {Get.to(() => SignUpView());
+    Timer(Duration(seconds: 2),() {Get.to(() => LoginView());
     });
     return Container(
       decoration: BoxDecoration(

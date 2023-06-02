@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:fyp/utils/global.colors.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:file/file.dart';
-import 'dart:io' as io;
+import 'package:fyp/Models/AdministratorModel/FoodItem.dart';
+import 'package:fyp/Controllers/Administrator/FoodItemController.dart';
+import 'package:fyp/Controllers/Administrator/FileUploadController.dart';
+import 'package:fyp/Views/AdministrationView/SuccessfulSubmissionView.dart';
+import 'dart:io' ;
 import 'dart:convert';
 import 'package:file_picker/file_picker.dart';
 // import 'dart:io' as io;
@@ -14,11 +17,6 @@ class AddFoodItemView extends StatefulWidget {
 }
 
 class _AddFoodItemViewState extends State<AddFoodItemView> {
-  String? surplusTitle;
-  String? surplusFood ;
-  int? quantity;
-  String? expiryDate;
-  String? image;
   String? surplusDescription;
   String? surplusID;
   File? _image;
@@ -30,7 +28,7 @@ class _AddFoodItemViewState extends State<AddFoodItemView> {
 
   final _formKey = GlobalKey<FormState>();
   final itemShelfLifeController = TextEditingController();
-  final surplusTitleController = TextEditingController();
+  final nameEditingController = TextEditingController();
   final surplusDescriptionController= TextEditingController();
   bool _showPrefix= false;
   // final surplus
@@ -62,21 +60,33 @@ File? file;
   final ImagePicker _picker = ImagePicker();
 
   Future <File?> pickImage() async{
-   // final selectedImage= await FilePicker().platform.pickFiles();
-   // final selectedImage = await FilePicker.platform.pickFiles(type: FileType.image);
-   final file = await ImagePicker().getImage(source: ImageSource.gallery);
-   // final result = await FilePicker.platform.pickFiles();
-   if (file != null) {
-     setState(() {
+    final file = await ImagePicker().getImage(source: ImageSource.gallery);
+    if (file != null) {
+      setState(() {
         if(file==null)return;
         if (file != null) {
-        _image  = Io.File(file.path) ;
+          _image  = File(file.path) ;
         } else {
           print('No image selected.');
         }
       });
-   }
+    }
   }
+
+  void addFoodItem() async{
+      String downloadUrl = await  FileUploadController().uploadImageToFirebase(_image);
+      FoodItem foodItems = FoodItem(name:nameEditingController.text, category: _selectedCategory, group: _selectedGroup, shelfLife: shelfLife, image: downloadUrl);
+      String addStatus  = await FoodItemController.addFoodItem(foodItems);
+      if (addStatus == "success") {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => SuccessfulSubmissionView()),);
+      } else {
+        print (addStatus);
+        // Display error message to user
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -137,7 +147,7 @@ File? file;
         padding: EdgeInsets.only(right:10, top:10),
         child:  TextFormField(
 
-        controller: surplusTitleController,
+        controller: nameEditingController,
         maxLength:25,
         style: TextStyle(
         fontSize: 13,
@@ -319,19 +329,41 @@ File? file;
         Padding(
           padding: EdgeInsets.only(right:10, top:10),
           child: Container(
-            width: 100,
-              height:100,
               alignment: Alignment.center,
-              color: GlobalColors.inputBorder,
-              child:  IconButton(
-                iconSize: 40,
-                color: GlobalColors.titleHeading,
-                icon: Icon(Icons.add_a_photo_outlined),
-                onPressed: ()
-                {
-                  pickImage();
-                },
+              child: Row(
+                children: [
+                Container(
+                width: 100,
+                height:100,
+                alignment: Alignment.center,
+                color: GlobalColors.inputBorder,
+                  child:IconButton(
+                    iconSize: 40,
+                    color: GlobalColors.titleHeading,
+                    icon: Icon(Icons.add_a_photo_outlined),
+                    onPressed: ()
+                    {
+                      pickImage();
+                    },
+                  ),
+                ),
+                  SizedBox(width: 5,),
+                  Container(
+                    width:100,
+                    height:100,
+                    decoration: BoxDecoration(
+                      // color: GlobalColors.mainColor,
+                      borderRadius: BorderRadius.all(Radius.circular(3)),
+                    ),
+                    child: _image == null
+                        ? Center(child:Text('No image selected') )
+                        : Image.file(_image!, fit: BoxFit.cover,),
+
+                  ),
+                ],
               )
+
+
           )
 
 
@@ -351,12 +383,12 @@ File? file;
       // Validate returns true if the form is valid, or false otherwise.
       if (_formKey.currentState!.validate()) {
 
-        print("valid");
+       addFoodItem();
       }
 
       // pickImage();
       },
-      child: const Text('DONATE FOOD',
+      child: const Text('ADD FOOD ITEM',
       style:TextStyle(
       fontWeight: FontWeight.bold,
       )),
