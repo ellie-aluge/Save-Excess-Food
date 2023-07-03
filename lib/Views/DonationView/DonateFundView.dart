@@ -4,7 +4,10 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'dart:convert';
 import 'dart:developer';
+import 'package:fyp/Views/DonationView/makePayment.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:url_launcher/url_launcher.dart';
+// import 'package:flutter_dotenv/flutter_dotenv.dart';
 class DonateFundView extends StatefulWidget {
   const DonateFundView({Key? key}) : super(key: key);
 
@@ -53,11 +56,38 @@ class _DonateFundViewState extends State<DonateFundView> {
 
   }
 
+  void openStripePaymentLink() async {
+    const paymentLink = 'https://donate.stripe.com/test_9AQ014g8P2sG1nW28a';
+    if (await canLaunch(paymentLink)) {
+      await launch(paymentLink);
+    } else {
+      // Handle error if the payment link cannot be launched
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Error'),
+            content: const Text('Could not open the payment link.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
 
   Future <void> donate() async {
+    print('hello');
     try {
 
       print ("here");
+      paymentIntent = await createPaymentIntent('300', 'MYR');
       //STEP 1: Create Payment Intent
       WidgetsFlutterBinding.ensureInitialized();
       Stripe.publishableKey =
@@ -68,7 +98,7 @@ class _DonateFundViewState extends State<DonateFundView> {
               'https://us-central1-save-excess-food.cloudfunctions.net/stripePaymentIntentRequest'),
           body: {
             'email': "alugeelinor@gmail.com",
-            'amount': "10000",
+            'amount': "20000",
           });
 
       final jsonResponse = jsonDecode(response.body);
@@ -92,30 +122,34 @@ class _DonateFundViewState extends State<DonateFundView> {
     displayPaymentSheet();
   }
 
-//   createPaymentIntent(String amount, String currency) async {
-//     try {
-//        //Request body
-//
-//       Map<String, dynamic> body = {
-//         'amount': amount,
-//         'currency': currency,
-//       };
-// print ("next");
-//       //Make post request to Stripe
-//
-//       var response = await http.post(
-//         Uri.parse('https://us-central1-save-excess-food.cloudfunctions.net/stripePaymentIntentRequest'),
-//         headers: {
-//           'Authorization': 'Bearer ${dotenv.env['stripeSecretKey']}',
-//           'Content-Type': 'application/x-www-form-urlencoded'
-//         },
-//         body: body,
-//       );
-//       return json.decode(response.body);
-//     } catch (err) {
-//       throw Exception(err.toString());
-//     }
-//   }
+
+
+
+
+  createPaymentIntent(String amount, String currency) async {
+    try {
+       //Request body
+
+      Map<String, dynamic> body = {
+        'amount': amount,
+        'currency': currency,
+      };
+print ("next");
+      //Make post request to Stripe
+
+      var response = await http.post(
+        Uri.parse('https://us-central1-save-excess-food.cloudfunctions.net/stripePaymentIntentRequest'),
+        headers: {
+          'Authorization': 'Bearer ${dotenv.env['STRIPE_SECRET']}',
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: body,
+      );
+      return json.decode(response.body);
+    } catch (err) {
+      throw Exception(err.toString());
+    }
+  }
 
   displayPaymentSheet() async {
     try {
@@ -185,12 +219,12 @@ class _DonateFundViewState extends State<DonateFundView> {
                 margin: EdgeInsets.only(top: 10, left:20, right:20 ),
                 alignment: Alignment.center,
                 width: MediaQuery.of(context).size.width * 0.9,
-                height: MediaQuery.of(context).size.height *0.24,
+                height: MediaQuery.of(context).size.height *0.38,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.all(Radius.circular(20)),
                   image: DecorationImage(
                     scale: 3.5,
-                    image: AssetImage('assets/admin/donateFund.jpeg',
+                    image: AssetImage('assets/admin/carousel2.jpeg',
                     ),
                     fit: BoxFit.cover,
                   ),
@@ -223,136 +257,143 @@ class _DonateFundViewState extends State<DonateFundView> {
                   Text("The Lost Food Project", style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 12),),
+
                 ],
               ),
             ),
 
-            SizedBox(height:20),
+            // SizedBox(height:20),
+            // Container(
+            //   padding: EdgeInsets.only(left:20),
+            //   child:   Text("Choose Amount", style: TextStyle(
+            //       fontWeight: FontWeight.bold,
+            //       fontSize: 15)),
+            // ),
+            // SizedBox(height: 30),
+            // Container(
+            //     padding: EdgeInsets.only(left:25, right:25),
+            //   child:Row(
+            //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            //     crossAxisAlignment: CrossAxisAlignment.start,
+            //     children:[
+            //       customRadio("MYR50", 1),
+            //
+            //       customRadio("MYR100", 2),
+            //
+            //       customRadio("MYR500", 3),
+            //     ],
+            //
+            //   )
+            // ),
+
+            // SizedBox(height: 30),
+            // Container(
+            //   padding: EdgeInsets.only(left: 20.0, right:20),
+            //   child: Row(
+            //     children: [
+            //       Expanded(
+            //         child: Divider(
+            //           color: Colors.grey,
+            //           height: 20,
+            //         ),
+            //       ),
+            //       Padding(
+            //         padding: EdgeInsets.symmetric(horizontal: 16.0),
+            //         child: Text(
+            //           'OR',
+            //           style: TextStyle(
+            //             color: Colors.grey,
+            //             fontSize: 13.0,
+            //           ),
+            //         ),
+            //       ),
+            //       Expanded(
+            //         child: Divider(
+            //           color: Colors.grey,
+            //           height: 20,
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // ),
+
+            SizedBox(height: 10),
+
             Container(
-              padding: EdgeInsets.only(left:20),
-              child:   Text("Choose Amount", style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15)),
-            ),
-            SizedBox(height: 30),
-            Container(
-                padding: EdgeInsets.only(left:25, right:25),
-              child:Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children:[
-                  customRadio("MYR50", 1),
-
-                  customRadio("MYR100", 2),
-
-                  customRadio("MYR500", 3),
-                ],
-
-              )
+              padding:EdgeInsets.only(left:20, bottom:10),
+              width:350,
+              child:Text("Your donation will help The Lost Food Project rescue quality food before it reaches landfill, and redistribute it to our charity partners and Malaysia’s urban poor families.Your donation will help keep TLFP lorries on the road collecting surplus food from our food donors and making sure it reaches people in need."),
             ),
 
-            SizedBox(height: 30),
-            Container(
-              padding: EdgeInsets.only(left: 20.0, right:20),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Divider(
-                      color: Colors.grey,
-                      height: 20,
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Text(
-                      'OR',
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 13.0,
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Divider(
-                      color: Colors.grey,
-                      height: 20,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            SizedBox(height: 30),
-
-            Center(
-              child :Container(
-
-              alignment: Alignment.center,
-              width: 200,
-              // margin: EdgeInsets.symmetric(horizontal: 30),
-              // padding: EdgeInsets.only(left:40, right:40),
-              child: Form(
-                key: _formKey,
-                child: TextFormField(
-
-                    controller: donationAmountController,
-                    keyboardType: TextInputType.number,
-
-                    validator: (value) {
-                      if (donationAmount == null) {
-                        return 'Please enter a number only';
-                      }
-
-                      final donation = this.donationAmount;
-                       if (donation!=null) {
-                        if(donation<=10)
-                        return 'Donation must be above MYR10';
-                      }
-                    },
-
-
-                    onChanged: (value) {
-                        donationAmount = double.tryParse(donationAmountController.text);
-                        print(donationAmount);
-                    },
-
-
-                    textAlign: TextAlign.center,
-                    decoration:  InputDecoration(
-
-                      prefix: _showPrefix ?  Padding(
-                        padding: EdgeInsets.only(left: 30),
-                        child: Text('MYR ', style: TextStyle(fontSize: 15,
-                                    color: GlobalColors.orangeColor)),
-                      ) : null,
-
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(50)),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(width: 1, color: GlobalColors.inputBorder),
-                      ),
-
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(width: 1, color: GlobalColors.orangeColor),
-                      ),
-                      contentPadding: EdgeInsets.symmetric(vertical: 1),
-                      counterText: "",
-                      hintText: "Enter the amount manually",
-                      hintStyle: TextStyle(
-                          color:GlobalColors.formLabel,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 10
-                      ),
-
-                    ),
-                  style: TextStyle(fontSize: 15, color: GlobalColors.orangeColor, fontWeight: FontWeight.bold),
-                ),
-
-
-              ),
-
-
-            ),
-            ),
+            // Center(
+            //   child :Container(
+            //
+            //   alignment: Alignment.center,
+            //   width: 200,
+            //   // margin: EdgeInsets.symmetric(horizontal: 30),
+            //   // padding: EdgeInsets.only(left:40, right:40),
+            //   child: Form(
+            //     key: _formKey,
+            //     child: TextFormField(
+            //
+            //         controller: donationAmountController,
+            //         keyboardType: TextInputType.number,
+            //
+            //         validator: (value) {
+            //           if (donationAmount == null) {
+            //             return 'Please enter a number only';
+            //           }
+            //
+            //           final donation = this.donationAmount;
+            //            if (donation!=null) {
+            //             if(donation<=10)
+            //             return 'Donation must be above MYR10';
+            //           }
+            //         },
+            //
+            //
+            //         onChanged: (value) {
+            //             donationAmount = double.tryParse(donationAmountController.text);
+            //             print(donationAmount);
+            //         },
+            //
+            //
+            //         textAlign: TextAlign.center,
+            //         decoration:  InputDecoration(
+            //
+            //           prefix: _showPrefix ?  Padding(
+            //             padding: EdgeInsets.only(left: 30),
+            //             child: Text('MYR ', style: TextStyle(fontSize: 15,
+            //                         color: GlobalColors.orangeColor)),
+            //           ) : null,
+            //
+            //           border: OutlineInputBorder(borderRadius: BorderRadius.circular(50)),
+            //           enabledBorder: OutlineInputBorder(
+            //             borderSide: BorderSide(width: 1, color: GlobalColors.inputBorder),
+            //           ),
+            //
+            //           focusedBorder: OutlineInputBorder(
+            //             borderSide: BorderSide(width: 1, color: GlobalColors.orangeColor),
+            //           ),
+            //           contentPadding: EdgeInsets.symmetric(vertical: 1),
+            //           counterText: "",
+            //           hintText: "Enter the amount manually",
+            //           hintStyle: TextStyle(
+            //               color:GlobalColors.formLabel,
+            //               fontWeight: FontWeight.w500,
+            //               fontSize: 10
+            //           ),
+            //
+            //         ),
+            //       style: TextStyle(fontSize: 15, color: GlobalColors.orangeColor, fontWeight: FontWeight.bold),
+            //     ),
+            //
+            //
+            //   ),
+            //
+            //
+            // ),
+            // ),
 
             Center(
               child: Container(
@@ -367,11 +408,7 @@ class _DonateFundViewState extends State<DonateFundView> {
 
                     onPressed: ()
                     {
-                      // Validate returns true if the form is valid, or false otherwise.
-                      if (_formKey.currentState!.validate()) {
-                        donate();
-                      }
-
+                        openStripePaymentLink();
 
                     },
                     child: const Text('DONATE NOW',

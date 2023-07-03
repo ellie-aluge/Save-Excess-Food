@@ -7,7 +7,8 @@ import 'package:fyp/Views/AdministrationView/NotificationAlert.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:fyp/Views/AdministrationView/HomeView.dart';
 import 'package:fyp/Views/SponsorView/SurplusFoodView.dart';
-
+import 'package:fyp/Views/NgoView/AnalysisView.dart';
+import 'package:fyp/Views/NavigationSideBar/NavigationDrawer.dart';
 class NgoHomeView extends StatefulWidget {
   const NgoHomeView({Key? key}) : super(key: key);
 
@@ -32,19 +33,8 @@ class _NgoHomeViewState extends State<NgoHomeView> {
         child: Scaffold(
           appBar: AppBar(
             backgroundColor: GlobalColors.mainColor,
-            // flexibleSpace: Container(
-            //   decoration: BoxDecoration(
-            //       gradient: LinearGradient(
-            //         colors: [GlobalColors.mainColor, GlobalColors.gradientColor],
-            //         begin: Alignment.bottomRight,
-            //       )
-            //   ),
-            // ),
             elevation: 2,
             centerTitle: true,
-            leading: IconButton(
-                icon: Icon(Icons.menu),
-                onPressed: () {}),
             title: Text("Save Excess Food",
               textAlign: TextAlign.center,
               style: TextStyle(
@@ -68,13 +58,14 @@ class _NgoHomeViewState extends State<NgoHomeView> {
                   Tab(icon: Image.asset(
                       'assets/admin/ngoLogo2.png', width: 23, height: 23),
                       text: 'NGO'),
-                  Tab(icon: Icon(Icons.fastfood), text: 'Surplus'),
-                  Tab(icon: Icon(Icons.monetization_on_outlined),
-                      text: 'Donation')
+                  Tab(icon: Icon(Icons.fastfood), text: 'Alerts'),
+                  Tab(icon: Icon(Icons.bar_chart),
+                      text: 'Analysis')
                 ]
             ),
           ),
 
+          drawer: Navigation(),
 
           body: TabBarView(
             children: [
@@ -195,102 +186,8 @@ class _NgoHomeViewState extends State<NgoHomeView> {
 
 
               // Widget for the  Donations(money).
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  NotificationAlert(),
+              AnalysisView(),
 
-                  Container(
-                    padding:EdgeInsets.all(10),
-                    height:100,
-                    width:  MediaQuery.of(context).size.width,
-                    color:GlobalColors.mainColor.withOpacity(0.3),
-                    child:Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text('SDN HOTEL & BAKERY', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black),),
-                        SizedBox(height:15),
-                        Text('RM300', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),),
-                      ],
-                    ),
-                  ),
-
-
-                  SizedBox(height: 10),
-                  Padding(padding: EdgeInsets.all(10),
-                      child: Container(
-                          child:Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children:[
-                                Center(
-                                    child: ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        primary: GlobalColors
-                                            .inputBorder,
-                                        side: BorderSide(
-                                          width: 2.0,
-                                          color: GlobalColors.mainColor,
-                                        ),
-
-                                      ),
-
-                                      onPressed: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  NgoHomeView()),);
-                                      },
-                                      child:  Text(
-                                          'DONATE NOW',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight
-                                                .bold,
-                                            color:GlobalColors.titleHeading,
-                                          )),
-                                    )
-
-                                ),
-
-
-                                Text('History'),
-
-                                Card(
-                                  child: DataTable(
-                                    columns: [
-                                      DataColumn(label: Text('Amount')),
-                                      DataColumn(label: Text('Date')),
-                                      DataColumn(label: Text('Status')),
-                                    ],
-                                    rows: [
-                                      DataRow(cells: [
-                                        DataCell(Text('John')),
-                                        DataCell(Text('25')),
-                                        DataCell(Icon(Icons.approval)),
-                                      ]),
-                                      DataRow(cells: [
-                                        DataCell(Text('Jane')),
-                                        DataCell(Text('30')),
-                                        DataCell(Text('Female')),
-                                      ]),
-                                      DataRow(cells: [
-                                        DataCell(Text('Bob')),
-                                        DataCell(Text('40')),
-                                        DataCell(Text('Male')),
-                                      ]),
-                                    ],
-                                  ),
-                                )
-
-                              ]
-                          )
-
-                      )
-                  ),
-
-                ],
-              ),
             ],
           ),
         ));

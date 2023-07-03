@@ -6,6 +6,8 @@ import 'dart:async';
 import 'package:fyp/Views/AdministrationView/SignUpView.dart';
 import 'package:fyp/Views/DonationView/DonateFoodView.dart';
 import 'package:fyp/Views/AdministrationView/RoleView.dart';
+import 'package:fyp/Views/NgoView/ViewRider.dart';
+import 'package:fyp/Views/DeliveryView/ManageDelivery.dart';
 class LandingPage extends StatelessWidget {
   const LandingPage({Key? key}) : super(key: key);
 

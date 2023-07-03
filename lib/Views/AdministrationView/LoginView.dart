@@ -6,6 +6,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fyp/Controllers/Administrator/LoginController.dart';
 import 'package:fyp/Views/AdministrationView/AdministratorHomeView.dart';
 import 'package:fyp/Views/NgoView/NgoHomeView.dart';
+import 'package:fyp/Views/DeliveryView/DeliveryHomeView.dart';
+
 
 class LoginView extends StatefulWidget {
   const LoginView({Key? key}) : super(key: key);
@@ -39,7 +41,7 @@ class _LoginViewState extends State<LoginView> {
       case "delivery":
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => AdministratorHomeView()),);
+          MaterialPageRoute(builder: (context) => DeliveryHomeView()),);
         break;
       case "sponsor":
         Navigator.push(

@@ -4,6 +4,8 @@ import 'package:fyp/Views/SponsorView/SponsorHomeView.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fyp/utils/global.colors.dart';
 import 'package:intl/intl.dart';
+import 'package:fyp/Views/SponsorView/SurplusDetails.dart';
+import 'package:fyp/Models/AdministratorModel/Stakeholder.dart';
 
 class SurplusFoodView extends StatefulWidget {
   const SurplusFoodView({Key? key}) : super(key: key);
@@ -13,18 +15,39 @@ class SurplusFoodView extends StatefulWidget {
 }
 
 class _SurplusFoodViewState extends State<SurplusFoodView> {
-  late Stream<QuerySnapshot> _foodStream;
+  int? quantity;
+  String? userId, userRole;
+  Stream<QuerySnapshot<Map<String, dynamic>>> _foodStream = Stream.empty();
 
   @override
   void initState() {
     super.initState();
-    _foodStream = FirebaseFirestore.instance.collection('surplusFood').snapshots();
+    initializeFoodStream();
+  }
+
+  void initializeFoodStream() async {
+    String? userRole = await Stakeholder().getRole();
+    print(userRole);
+
+    if (userRole != null && userRole.toLowerCase() == "ngo") {
+      setState(() {
+        _foodStream = FirebaseFirestore.instance.collection('surplusFood').snapshots();
+      });
+    } else {
+      String userId = Stakeholder().getCurrentUserID();
+      setState(() {
+        _foodStream = FirebaseFirestore.instance
+            .collection('surplusFood')
+            .where('stakeholderId', isEqualTo: userId)
+            .snapshots();
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: StreamBuilder<QuerySnapshot>(
+      body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
         stream: _foodStream,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
@@ -32,11 +55,11 @@ class _SurplusFoodViewState extends State<SurplusFoodView> {
           }
 
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child:CircularProgressIndicator()) ;
+            return Center(child: CircularProgressIndicator());
           }
 
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return Text('No surplus food available.');
+            return Center(child: Text('No surplus food available.'));
           }
 
           return ListView.builder(
@@ -53,18 +76,28 @@ class _SurplusFoodViewState extends State<SurplusFoodView> {
               var description = foodData['description'];
 
               return ListTile(
-                contentPadding: EdgeInsets.symmetric(vertical: 10),
+                contentPadding: EdgeInsets.symmetric(vertical: 20),
                 leading: Container(
                   width: 100,
                   height: 100,
-                  child: Image.network(imageUrl),
+                  child:imageUrl != null
+                      ? Image.network(
+                    imageUrl!,
+                    width: 100,
+                    height: 100,
+                  )
+                      : Image.asset(
+                    'assets/admin/assigned.jpg',
+                    width: 100,
+                    height: 100,
+                  ),
                 ),
                 title: Text(
                   title,
                   style: TextStyle(
                     color: GlobalColors.titleHeading,
                     fontWeight: FontWeight.bold,
-                    fontSize: 13,
+                    fontSize: 14,
                   ),
                 ),
                 subtitle: Column(
@@ -83,9 +116,24 @@ class _SurplusFoodViewState extends State<SurplusFoodView> {
                   ],
                 ),
                 onTap: () {
+                  quantity = foodData['quantity'];
+                  var id = foodData['surplusId'];
+                  List<dynamic> foodList = foodData['foodItems'];
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (_) => SponsorHomeView()),
+                    MaterialPageRoute(
+                      builder: (_) => SurplusDetails(
+                        id: id,
+                        date: date,
+                        location: location,
+                        imageUrl: imageUrl,
+                        title: title,
+                        description: description,
+                        quantity: quantity,
+                        foodList: foodList,
+                        userRole:userRole,
+                      ),
+                    ),
                   );
                 },
               );

@@ -8,7 +8,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:fyp/Views/SponsorView/MultipleSelection.dart';
 import 'package:fyp/Controllers/Administrator/FoodItemController.dart';
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
@@ -149,16 +148,46 @@ class _DonateFoodViewState extends State<DonateFoodView> {
   }
 
   void addSurplusFood() async{
-    String downloadUrl = await  FileUploadController().uploadImageToFirebase(_image);
+    String? downloadUrl='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ4ezqKCJsleRUBKQRpb3morzMgSTf8xxqeWg&usqp=CAU';
+    if(_image!=null)
+      {
+        String downloadUrl = await  FileUploadController().uploadImageToFirebase(_image);
+      }
     String stakeholderId= Stakeholder().getCurrentUserID();
-     // multiple();
     DonateFood surplusFood = DonateFood(stakeholderId:stakeholderId,foodItems:selectedOptions,surplusTitle:surplusTitleController.text, location: _searchController.text, quantity: quantity, image: downloadUrl, description:surplusDescriptionController.text, date:selectedDate);
     String addStatus  = await DonateFoodController.addSurplusFood(surplusFood);
     if (addStatus == "success") {
+      print("successful status");
+      print(addStatus);
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => SuccessfulSubmissionView()),);
     } else {
+       AlertDialog(
+        title: const Text('Alert Dialog'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.asset(
+              'assets/admin/assigned.jpg',
+              height: 100,
+              width: 100,
+            ),
+            const SizedBox(height: 16),
+            const Text('Oops an error occured.'),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              // Handle button press
+              Navigator.pop(context);
+            },
+            child: const Text('OK'),
+          ),
+        ],
+      );
+       print("status of upload");
       print (addStatus);
       // Display error message to user
     }
@@ -169,6 +198,12 @@ class _DonateFoodViewState extends State<DonateFoodView> {
   static void updateSelectedOptions(List<String> options) {
     selectedOptions = options;
     print (selectedOptions);
+  }
+
+  @override
+  void dispose() {
+    _mapController?.dispose(); // Delete the temporary image file when disposing the widget
+    super.dispose();
   }
 
   @override
@@ -276,7 +311,7 @@ class _DonateFoodViewState extends State<DonateFoodView> {
 
 
                               Container(
-                                height: 400,
+                                height: 250,
                                 child: Column(
                                   children: [
                                     TextField(
@@ -299,13 +334,13 @@ class _DonateFoodViewState extends State<DonateFoodView> {
                                           });
                                         },
                                         initialCameraPosition: CameraPosition(
-                                          target: LatLng(37.7749, -122.4194), // Default initial location
+                                          target: LatLng(3.1412, 101.68653), // Default initial location
                                           zoom: 12,
                                         ),
                                         markers: Set<Marker>.from([
                                           Marker(
                                             markerId: MarkerId('searchedLocation'),
-                                            position: _searchAddress ?? LatLng(37.7749, -122.4194),
+                                            position: _searchAddress ?? LatLng(3.1412, 101.68653),
                                           ),
                                         ]),
                                       ),

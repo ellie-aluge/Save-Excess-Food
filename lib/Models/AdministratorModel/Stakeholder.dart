@@ -84,4 +84,20 @@ class Stakeholder {
       return '';
     }
   }
+  Future<String?> getRole() async {
+    String userId = getCurrentUserID(); // Replace with the actual user ID
+    var usersCollection = FirebaseFirestore.instance.collection("stakeholder");
+
+    var userDoc = await usersCollection.doc(userId).get();
+    var userData = userDoc.data() as Map<String, dynamic>?;
+
+    if (userData != null) {
+      var userRole = userData['role'] as String?;
+      print("User role: $userRole");
+      return userRole;
+    } else {
+      print("User document not found.");
+      return null;
+    }
+  }
 }

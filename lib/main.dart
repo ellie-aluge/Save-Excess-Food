@@ -4,10 +4,16 @@ import 'package:get/get.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:fyp/utils/global.colors.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+// import 'package:flutter_stripe/flutter_stripe.dart';
+
 Future main() async
 {
   WidgetsFlutterBinding.ensureInitialized();
+  Stripe.publishableKey = "pk_test_51L7gEWHCNwHv6amdoazGLKNAE80S8wJcwcBLLqTpyrMyAB8UUVVTjrPRygbd89a3REo6Mwu735CVLBWYNzZ0Myuj00pClhmSwT";
   await Firebase.initializeApp();
+  await dotenv.load(fileName: 'assets/.env');
   runApp(const App());
 }
 
